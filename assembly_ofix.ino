@@ -3,15 +3,19 @@
 LiquidCrystal_I2C lcd(0x27,16,2);
 
 //variable ultrasonik
-float Rpump = 2;
-int const Trig = 10;
-int const Echo = 9;
+float Rpump = 10;
+int const Trig = 12;
+int const Echo = 13;
 int duration, distance;
 int jarakx;
+int data;
 
 //varibale photodioda
 int pin = A0;
-int Rphoto = 3;
+int Rphoto = 11;
+
+
+//photodioda
 
 void setup() {
   //LCD
@@ -31,7 +35,6 @@ void loop()
 {
   //photodioda
   int data = analogRead(pin);
-  delay(1000);
 
   //LCD photodioda
   lcd.backlight();
@@ -41,18 +44,23 @@ void loop()
   lcd.print(data);
   Serial.print("Kekeruhan= ");
   Serial.println(data);
+  delay(1000);
 
   //Perulangan photodioda
-    if(data>1000)
+    if(data>800)
   {
     digitalWrite(Rphoto, HIGH);
     lcd.setCursor(7,0);
-    lcd.print("AirKeruh");
-    delay(1000);
+    lcd.print("Air Keruh");
   }
   else
   {
   digitalWrite(Rphoto, LOW);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("K=");
+  lcd.setCursor(3,0);
+  lcd.print(data);
   lcd.setCursor(7,0);
   lcd.print("AirJernih");
   }
@@ -78,16 +86,22 @@ void loop()
   lcd.print(distance);
   
   //perulangan ultrasonik
-  if(distance > 30)
+  jarakx = constrain(distance, 12, 23);
+  if(distance >= 24)
   {
   digitalWrite(Rpump, HIGH);
-  lcd.setCursor(6,1);
+  lcd.setCursor(7,1);
   lcd.print("TinggiMin");
   }
-  else if (distance < 10)
+  else if (distance <=11)
   {
   digitalWrite(Rpump, LOW);
-  lcd.setCursor(6,1);
+  lcd.setCursor(7,1);
   lcd.print("TinggiMax");
+  }
+  else if(distance == jarakx)
+  {
+  lcd.setCursor(7,1);
+  lcd.print("AirSurut");
   }
 }
